@@ -22,11 +22,11 @@ const Discord = require('discord.js');
 const faker = require('faker');
 const client = new Discord.Client();
 const prefix = "$"
+const cc = require('cryptocompare')
 var token = ''
 client.on('ready', () => {
   console.log(`Random Bot Online`);
 });
-
 client.on('message', message => {
 	var msg = message.content
 	if(msg === '$name'){
@@ -43,6 +43,12 @@ client.on('message', message => {
 	}
 	if(msg === '$color'){
 		message.channel.send(`${faker.fake("{{internet.avatar}}")}`);
+	}
+	if(msg === '$bitcoin'){
+		cc.priceFull(['BTC', 'ETH'], ['USD', 'EUR'])
+		.then(prices => {
+		message.channel.send(prices);	
+		}
 	}
 });
 
