@@ -25,7 +25,7 @@ const prefix = "$"
 const cc = require('cryptocompare')
 var token = ''
 client.on('ready', () => {
-  console.log(`Random Bot Online`);
+  console.log(`Bot Is Now Online!`);
 });
 client.on('message', message => {
 	var msg = message.content
@@ -44,12 +44,32 @@ client.on('message', message => {
 	if(msg === '$color'){
 		message.channel.send(`${faker.fake("{{internet.avatar}}")}`);
 	}
-	if(msg === '$bitcoin'){
+	if(msg === '$bitcoin'){  //This bit is fairly experimental and may not work depending... It was added Without testing
 		cc.priceFull(['BTC', 'ETH'], ['USD', 'EUR'])
 		.then(prices => {
 		message.channel.send(prices);	
 		}
 	}
+        if(msg === '$number'){
+		message.channel.send(`${Math.floor(Math.random() * 100)}`);
+		}
 });
 
 client.login(token);
+	
+/*
+	   Message From Developer
+		Dependencies:
+		-Faker.js
+		-CryptoCompare
+		-Discord.js
+		Original Features:
+		Nick - Rename
+		Name - False Name
+		Cat - Just A Cat
+		Avatar - A Random Avatar
+		Color - I forgot
+		 New Stuff:
+		 Bitcoin - Should Tell The Price Of Bitcoin and ETH
+		 Number - Random Number Genertor
+*/
