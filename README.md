@@ -1,3 +1,4 @@
 # Random-Bot
 ## Discord Bot
-Sources<a href="https://github.com/marak/Faker.js/"> Faker </a>
+
+Sourc are listed inside `index.js`

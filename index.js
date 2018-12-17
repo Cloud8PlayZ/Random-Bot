@@ -18,58 +18,60 @@
  |_| \_|\___/ \__,_|\___(_)/ |___/
                          |__/     
 */
+
 const Discord = require('discord.js');
-const faker = require('faker');
-const client = new Discord.Client();
-const prefix = "$"
-const cc = require('cryptocompare')
-var token = ''
-client.on('ready', () => {
-  console.log(`Bot Is Now Online!`);
+const bot = new Discord.Client({
+	disableEveryone: true
 });
-client.on('message', message => {
-	var msg = message.content
-	if(msg === '$name'){
-		message.channel.send(`The Name Is ${faker.fake("{{name.lastName}}, {{name.firstName}}")}`);
+const config = require('./config.json');
+bot.commands = Discord.Collection();
+const fs = require('fs');
+
+fs.readdir('./commands/', (err, files) => {
+	if (err) console.log(err);
+	let jsfile = files.filter(f => f.split(".").pop() === "js");
+	if (jsfile.length <= 0) {
+		console.log("No command file found!");
+		return;
 	}
-	if(msg === '$nick'){
-		message.guild.members.get(client.user.id).setNickname(`${faker.fake("{{commerce.productName}}")}`)
-	}
-	if(msg === '$cat'){
-		message.channel.send(`${faker.fake("{{image.cats}}")}`);
-	}
-	if(msg === '$avatar'){
-		message.channel.send(`${faker.fake("{{internet.avatar}}")}`);
-	}
-	if(msg === '$color'){
-		message.channel.send(`${faker.fake("{{internet.avatar}}")}`);
-	}
-	if(msg === '$bitcoin'){  //This bit is fairly experimental and may not work depending... It was added Without testing
-		cc.priceFull(['BTC', 'ETH'], ['USD', 'EUR'])
-		.then(prices => {
-		message.channel.send(prices);	
-		}
-	}
-        if(msg === '$number'){
-		message.channel.send(`${Math.floor(Math.random() * 100)}`);
-		}
+
+	jsfile.forEach((f, i) => {
+		let props = require(`./commands/${f}`);
+		console.log(`${f} loaded!`);
+		bot.commands.set(props.help.name, props);
+	});
+
+	bot.on("message", async message => {
+		if (message.author.bot) return;
+		if (message.channel.type === "dm") return;
+
+		let prefix = config.prefix;
+		let messageArray = message.content.split(" ");
+		let cmd = messageArray[0];
+		let args = cmd.splice(1);
+		let commandFile = bot.commands.get(cmd.splice(prefix.length));
+
+		if (commandFile) commandFile.run(bot, message, args);
+	});
+
 });
 
-client.login(token);
-	
+if (config.token === "") {
+	console.log("Invalid Token!");
+} else {
+	bot.log(config.token);
+}
+
 /*
 	   Message From Developer
 		Dependencies:
-		-Faker.js
-		-CryptoCompare
-		-Discord.js
-		Original Features:
-		Nick - Rename
-		Name - False Name
-		Cat - Just A Cat
-		Avatar - A Random Avatar
-		Color - I forgot
-		 New Stuff:
-		 Bitcoin - Should Tell The Price Of Bitcoin and ETH
-		 Number - Random Number Genertor
+		- discord.js : npm install discord.js
+		- fs : npm install fs
+		
+		Changed Features:
+		- Rewrite Base
+		- Added 2 Commands : ping & serverinfo
+
+		What can you do?
+		- Expand commands according to base
 */
