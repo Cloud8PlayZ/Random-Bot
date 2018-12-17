@@ -1,4 +1,4 @@
 # Random-Bot
 ## Discord Bot
 
-Sourc are listed inside `index.js`
+Sources are listed inside `index.js`
